@@ -71,7 +71,7 @@ namespace tls
 
     virtual ~Context()
     {
-      LOG_INFO_FMT("Destructing context, ssl is {}", ssl.get());
+      LOG_INFO_FMT("Destructing context, ssl is {}", (size_t)ssl.get());
     };
 
     void set_bio(
