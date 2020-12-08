@@ -31,6 +31,8 @@ namespace tls
       auto tmp_ssl = mbedtls::make_unique<mbedtls::SSLContext>();
       auto tmp_cfg = mbedtls::make_unique<mbedtls::SSLConfig>();
 
+      LOG_INFO_FMT("XXXX: tmp_ssl is {}", (size_t)tmp_ssl.get());
+
       mbedtls_ssl_conf_rng(
         tmp_cfg.get(), entropy->get_rng(), entropy->get_data());
 
@@ -64,9 +66,13 @@ namespace tls
 
       ssl = std::move(tmp_ssl);
       cfg = std::move(tmp_cfg);
+      LOG_INFO_FMT("XXXX: ssl is {}", (size_t)ssl.get());
     }
 
-    virtual ~Context() {}
+    virtual ~Context()
+    {
+      LOG_INFO_FMT("Destructing context, ssl is {}", ssl.get());
+    };
 
     void set_bio(
       void* enclave,
