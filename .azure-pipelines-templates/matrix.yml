@@ -1,4 +1,6 @@
 parameters:
+  builds: ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
+
   target: ["NoSGX"]
   # target: ["NoSGX", "SGX"]
 
@@ -43,15 +45,16 @@ jobs:
   #     perf_or_release: ${{ parameters.perf_or_release }}
 
   # Debug
-  - ${{ each target in parameters.target }}:
-      - template: common.yml
-        parameters:
-          target: ${{ target }}
-          env: ${{ parameters.env[target] }}
-          cmake_args: "${{ parameters.build.common.cmake_args }} ${{ parameters.build.debug.cmake_args }} ${{ parameters.build[target].cmake_args }}"
-          suffix: "Debug"
-          artifact_name: "${{ target }}_Debug"
-          ctest_filter: "${{ parameters.test[target].ctest_args }} -R jwt_test --repeat-until-fail 1000"
+  - ${{ each build_n in parameters.builds }}:
+    - ${{ each target in parameters.target }}:
+        - template: common.yml
+          parameters:
+            target: ${{ target }}
+            env: ${{ parameters.env[target] }}
+            cmake_args: "${{ parameters.build.common.cmake_args }} ${{ parameters.build.debug.cmake_args }} ${{ parameters.build[target].cmake_args }}"
+            suffix: "Debug_${{ build_n }}"
+            artifact_name: "${{ target }}_${{ build_n }}_Debug"
+            ctest_filter: "${{ parameters.test[target].ctest_args }} -R jwt_test --repeat-until-fail 10"
 
   # # Performance
   # - template: common.yml
