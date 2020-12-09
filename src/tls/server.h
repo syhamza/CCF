@@ -16,7 +16,6 @@ namespace tls
       Context(false, dtls),
       cert(cert_)
     {
-      LOG_INFO_FMT("XXXX: (Server) ssl is {}", (size_t)ssl.get());
       cert->use(ssl.get(), cfg.get());
     }
   };

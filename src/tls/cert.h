@@ -82,7 +82,6 @@ namespace tls
 
     void use(mbedtls_ssl_context* ssl, mbedtls_ssl_config* cfg)
     {
-      LOG_INFO_FMT("XXXX: Using ssl {}", (size_t)ssl);
       if (peer_hostname.has_value())
       {
         // Peer hostname is only checked against peer certificate (SAN

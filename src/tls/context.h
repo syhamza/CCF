@@ -23,6 +23,19 @@ namespace tls
       MBEDTLS_TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256, 0};
 #endif
 
+    void dump_ssl()
+    {
+      LOG_INFO_FMT("  conf is {}", (size_t)ssl->conf);
+      LOG_INFO_FMT("  conf->f_dbg is {}", (size_t)ssl->conf->f_dbg);
+      LOG_INFO_FMT("  out_buf is {}", (size_t)ssl->out_buf);
+      LOG_INFO_FMT("  in_buf is {}", (size_t)ssl->in_buf);
+      LOG_INFO_FMT("  transform is {}", (size_t)ssl->transform);
+      LOG_INFO_FMT("  handshake is {}", (size_t)ssl->handshake);
+      LOG_INFO_FMT("  session is {}", (size_t)ssl->session);
+      LOG_INFO_FMT("  hostname is {}", (size_t)ssl->hostname);
+      LOG_INFO_FMT("  cli_id is {}", (size_t)ssl->cli_id);
+    }
+
   public:
     Context(bool client, bool dgram) : entropy(tls::create_entropy())
     {
@@ -30,8 +43,6 @@ namespace tls
 
       auto tmp_ssl = mbedtls::make_unique<mbedtls::SSLContext>();
       auto tmp_cfg = mbedtls::make_unique<mbedtls::SSLConfig>();
-
-      LOG_INFO_FMT("XXXX: tmp_ssl is {}", (size_t)tmp_ssl.get());
 
       mbedtls_ssl_conf_rng(
         tmp_cfg.get(), entropy->get_rng(), entropy->get_data());
@@ -66,12 +77,14 @@ namespace tls
 
       ssl = std::move(tmp_ssl);
       cfg = std::move(tmp_cfg);
-      LOG_INFO_FMT("XXXX: ssl is {}", (size_t)ssl.get());
+      LOG_INFO_FMT("Constructed context, ssl is {}", (size_t)ssl.get());
+      dump_ssl();
     }
 
     virtual ~Context()
     {
       LOG_INFO_FMT("Destructing context, ssl is {}", (size_t)ssl.get());
+      dump_ssl();
     };
 
     void set_bio(
